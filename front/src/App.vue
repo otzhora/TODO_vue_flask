@@ -9,7 +9,6 @@
 <script>
 import todos from './components/todos'
 import AddTodo from './components/add_todo'
-import axios from 'axios'
 
 export default {
   name: 'app',
@@ -19,26 +18,31 @@ export default {
   },
   data() {
     return {
-      todos: []
+      todos: [{
+        'id': 1,
+        'text': 'ses'
+      },
+      {
+        'id': 2,
+        'text': 'kek'
+      },
+      {
+        'id': 3,
+        'text': 'lol'
+      }]
     }
   },
   methods: {
     delete_todo (id){
-      axios.delete(`http://localhost:5001/api/{todo.id}`)
-        .then(res => this.todos = this.todos.filter(todo => todo.id !== id))
+      this.todos = this.todos.filter(todo => todo.id !== id)
       
     },
     add_todo(newTodo){
-      axios.post(`http://localhost:5001/api/{newTodo.id}`, newTodo.text)
-        .then(res => this.todos = [...this.todos, newTodo])
+      this.todos = [...this.todos, newTodo]
     }
   },
   created() {
-    axios.get('http://localhost:5001/api')
-      .then(res => {
-        this.todos = res.data
-        print(res)
-      })
+    // TODO
   },
 }
 </script>

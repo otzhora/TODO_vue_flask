@@ -1,18 +1,45 @@
 <template>
   <div id="app">
     <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <AddTodo v-on:add-todo='add_todo'/>
+    <todos v-bind:todos='todos' v-on:del-todo='delete_todo' />
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import todos from './components/todos'
+import AddTodo from './components/add_todo'
+import axios from 'axios'
 
 export default {
   name: 'app',
   components: {
-    HelloWorld
-  }
+    todos,
+    AddTodo
+  },
+  data() {
+    return {
+      todos: []
+    }
+  },
+  methods: {
+    delete_todo (id){
+      axios.delete(`http://localhost:5001/api/{todo.id}`)
+        .then(res => this.todos = this.todos.filter(todo => todo.id !== id))
+      
+    },
+    add_todo(newTodo){
+      axios.post(`http://localhost:5001/api/{newTodo.id}`, newTodo.text)
+        .then(res => this.todos = [...this.todos, newTodo])
+    }
+  },
+  created() {
+    axios.get('http://localhost:5001/api')
+      .then(res => {
+        this.todos = res.data
+        print(res)
+      })
+  },
 }
 </script>
 

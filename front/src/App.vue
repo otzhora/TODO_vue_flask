@@ -9,6 +9,28 @@
 <script>
 import todos from './components/todos'
 import AddTodo from './components/add_todo'
+import axios from 'axios'
+
+async function get_todos() {
+  let posts = await axios.get('http://localhost:5001/api')
+  posts = posts.data
+  let todos = []
+  for(let key in posts) {
+    todos = [...todos, {
+      'id': key,
+      'text': posts[key]
+    }]
+  }
+  return todos
+}
+
+function get_id(todos) {
+  let id = 0
+  for(let todo in todos) {
+    id = id > parseInt(todos[todo]['id']) ? id :parseInt(todos[todo]['id'])
+  }
+  return id + 2
+}
 
 export default {
   name: 'app',
@@ -18,31 +40,32 @@ export default {
   },
   data() {
     return {
-      todos: [{
-        'id': 1,
-        'text': 'ses'
-      },
-      {
-        'id': 2,
-        'text': 'kek'
-      },
-      {
-        'id': 3,
-        'text': 'lol'
-      }]
+      todos: [],
+      id: 1
     }
   },
   methods: {
-    delete_todo (id){
-      this.todos = this.todos.filter(todo => todo.id !== id)
-      
+    async delete_todo (id){
+      await axios.delete(`http://localhost:5001/api/${id}`)
+
+      this.todos = await get_todos()
     },
-    add_todo(newTodo){
-      this.todos = [...this.todos, newTodo]
+    async add_todo(newTodo){
+      let id = get_id(this.todos)
+      
+      await axios.post(`http://localhost:5001/api/${id}`, {
+        data: {
+          'text': newTodo['text']
+        }, 
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      this.todos = await get_todos()
     }
   },
-  created() {
-    // TODO
+  async created() {
+    this.todos = await get_todos()
   },
 }
 </script>

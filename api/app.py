@@ -12,6 +12,7 @@ from flask import send_from_directory
 from flask import render_template
 
 import os
+import json
 
 
 @app.route('/api')
@@ -24,7 +25,7 @@ def manage_todos(id=None):
     if request.method == 'GET':
         return todo_manager.todos[id]
     if request.method == 'POST':
-        todo_manager.add(id, request.form['text'])
+        todo_manager.add(id, request.get_json()['data']['text'])
         return 'OK'
     if request.method == 'DELETE':
         todo_manager.delete(id)
